@@ -1,0 +1,24 @@
+[gd_scene load_steps=2 format=3 uid="uid://qbmfimh6nj8y"]
+
+[ext_resource type="Script" path="res://Game.gd" id="1_hv6k1"]
+
+[node name="GameLoad" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_hv6k1")
+
+[node name="CenterContainer" type="CenterContainer" parent="."]
+layout_mode = 0
+offset_right = 1280.0
+offset_bottom = 720.0
+
+[node name="Label" type="Label" parent="CenterContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Game Is Loading..."
+horizontal_alignment = 1
+vertical_alignment = 1
