@@ -1,15 +1,25 @@
-class_name Game extends Node
+class_name Game extends Control
 
 var http_request = HTTPRequest.new()
 var version = Version.new(0, 1, 0)
 var latest_version = Version.new(-1, -1, -1)
 
+var node_notification = load("res://UI/notification.tscn")
+
 func _ready():
 	add_child(http_request)
 	print(version)
 	get_latest_from_github()
+	latest_version.Major = 1
 	if version.compare(latest_version) == 1:
-		OS.shell_open("")
+		var node_update = node_notification.instantiate()
+		get_node(".").add_child(node_update)
+		node_update.init("Update available!", "There is an update available\r\nYour version: " + version.to_string() + "\r\nNewest version: " + latest_version.to_string())
+		node_update.notification_show(5)
+		#OS.shell_open("https://api.github.com/repos/NSWIP/MTBSG/releases/latest")
+	elif version.compare(latest_version) == -1:
+		pass
+	#load_mods()
 
 func get_latest_from_github():
 	http_request.request_completed.connect(Callable(_on_get_latest_from_github))
@@ -26,7 +36,17 @@ func _on_get_latest_from_github(result: int, response_code: int, _headers: Packe
 		printerr("Bad Response")
 		return
 	
-	latest_version = JSON.parse_string(body.get_string_from_utf8())["tag_name"]
+	var parsed = JSON.parse_string(body.get_string_from_utf8())["tag_name"]
+	parsed = parsed.split(".")
+	latest_version = Version.new(parsed[0], parsed[1], parsed[2])
+
+func load_mods():
+	var dir = DirAccess.open("user://mods")
+	if dir.get_files() == null:
+		return
+	for file in dir.get_files():
+		print(file)
+
 
 class Version:
 	var Major: int
